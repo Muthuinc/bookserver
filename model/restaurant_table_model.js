@@ -63,10 +63,6 @@ const restaurantTable = mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  posManagerId: {
-    type: String,
-    ref: "AccessedEmployees",
-  },
 });
 
 module.exports = mongoose.model("RestaurantTable", restaurantTable);

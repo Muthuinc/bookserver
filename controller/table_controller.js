@@ -8,7 +8,7 @@ exports.addTableData = async (req, res) => {
     const isRestaurant = req.restaurant;
 
     if (isRestaurant) {
-      const { numberOfSeats, tableNum, captain, posManagerId } = req.body;
+      const { numberOfSeats, tableNum, captain } = req.body;
       const file = req.files[0];
 
       const imagePath = `table/${isRestaurant}/${file.filename}`;
@@ -25,7 +25,6 @@ exports.addTableData = async (req, res) => {
         restaurant: isRestaurant,
         image: itemImage,
         captainId: captain,
-        posManagerId: posManagerId,
       });
 
       await newTable.save();
@@ -46,7 +45,7 @@ exports.getTableDataAtAdmin = async (req, res) => {
     if (isRestaurant) {
       const tableData = await Table.find({
         restaurant: isRestaurant,
-      });
+      })
       console.log(tableData, "tableData");
       res.status(200).json({ success: true, tableData });
     } else {
@@ -103,9 +102,9 @@ exports.getToEditTableData = async (req, res) => {
         restaurant: restaurant,
         accessFor: "Captain manager",
       }).select("-password");
-
+      
       if (table) {
-        res.json({ success: true, table, captains, table });
+        res.json({ success: true, table, captains ,table});
       } else {
         res.status(404).json({ success: false, message: "Category not found" });
       }
@@ -122,8 +121,10 @@ exports.updateTableData = async (req, res) => {
   try {
     const isRestaurant = req.restaurant;
     const tableId = req.params.tableId;
-    const { tableNum, numberOfSeats, captain } = req.body;
+    const { tableNum, numberOfSeats ,captain} = req.body;
 
+  
+    
     if (isRestaurant) {
       let tableImage;
 
@@ -151,11 +152,11 @@ exports.updateTableData = async (req, res) => {
             tableName: tableNum,
             numberOfSeats: numberOfSeats,
             image: tableImage,
-            captainId: captain,
+            captainId:captain
           },
         }
       );
-      console.log(updatedTable, "updatedTable");
+console.log(updatedTable,"updatedTable");
       if (!updatedTable) {
         return res
           .status(404)
@@ -197,6 +198,7 @@ exports.deleteTable = async (req, res) => {
   }
 };
 
+
 exports.captainList = async (req, res) => {
   try {
     const isRestaurant = req.restaurant;
@@ -221,6 +223,8 @@ exports.captainList = async (req, res) => {
   }
 };
 
+
+
 exports.captainPassFilter = async (req, res) => {
   try {
     const restaurant = req.restaurant;
@@ -228,14 +232,15 @@ exports.captainPassFilter = async (req, res) => {
     if (restaurant) {
       const { start, end } = req.body;
 
-      const filteredData = await Order.aggregate([
+
+   const filteredData =await Order.aggregate([
         {
           $match: {
-            orderMode: "dineIn",
+            orderMode: 'dineIn',
             restaurantId: restaurant,
             date: {
               $gte: new Date(start),
-              $lte: new Date(end + "T23:59:59.999Z"),
+              $lte: new Date(end + 'T23:59:59.999Z'),
             },
           },
         },
@@ -243,19 +248,21 @@ exports.captainPassFilter = async (req, res) => {
           $group: {
             _id: {
               date: {
-                $dateToString: { format: "%d-%m-%Y", date: "$date" },
+                $dateToString: { format: "%d-%m-%Y", date: "$date" }
               },
             },
-            totalSales: { $sum: "$Amount" },
+            totalSales: { $sum: '$Amount' },
             totalOrders: { $sum: 1 },
           },
         },
         {
-          $sort: { "_id.date": -1 },
-        },
-      ]);
+          $sort: { '_id.date': -1 }
+        }
+      ])
 
+      
       return res.json({ success: true, data: filteredData });
+      
     } else {
       res.json({ success: false, message: "Session expired!" });
     }

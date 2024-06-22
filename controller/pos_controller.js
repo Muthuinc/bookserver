@@ -936,7 +936,6 @@ exports.todayExpense = async (req, res) => {
     const isRestaurant = req.restaurant;
     const isPosManager = req.id;
     const expenseData = req.body;
-    console.log("isPosManager",isPosManager)
 
     if (isRestaurant) {
       if (isPosManager) {
@@ -1940,7 +1939,7 @@ exports. TodaysAdminPassbookData = async (req, res) => {
       amount:todaysOpeningBalance.length>0?todaysOpeningBalance[0].totalAmountSum:0
     },
     {
-      title: "Sales Amount",
+      title: "Floating Amount",
       amount:todaysFloatingCash
     },
     {
@@ -2001,7 +2000,7 @@ exports. TodaysAdminPassbookData = async (req, res) => {
         amount:todaysOpeningBalance.length>0?todaysOpeningBalance[0].totalAmountSum:0
       },
       {
-        title: "Sales Amount",
+        title: "Floating Amount",
         amount:todaysFloatingCash
       },
       {
@@ -2069,7 +2068,7 @@ exports.getPassBookData = async (req, res) => {
       currentDate,
       nextDay
     )
-    //Yesterday datas
+    //Yesterday
     const YesterdaysTotalExpense = await getYestardaysTotalExpense(
       restaurantId,
       currentDate,
@@ -2087,7 +2086,7 @@ exports.getPassBookData = async (req, res) => {
 
 const YesterdaysTotalClosing= await getClosingAmountSumYesterday(restaurantId)
 
-//Last-Week datas
+//Last-Week
     const LastWeekTotalOpening = await getLastCompleteWeekTotalOpeningBalance(
       restaurantId
     );
@@ -2099,7 +2098,7 @@ const YesterdaysTotalClosing= await getClosingAmountSumYesterday(restaurantId)
 
     const lastweekClosingBalance = await getLastCompleteWeekTotalClosingBalance(restaurantId)
 
-//Last-Month datas
+//Last-Month
     const lastMonthTotalExpense = await getLastMonthTotalExpense(restaurantId);
     const lastMonthOpeningBalance = await getLastMonthTotalOpeningBalance(
       restaurantId
@@ -2109,7 +2108,7 @@ const YesterdaysTotalClosing= await getClosingAmountSumYesterday(restaurantId)
 
     const lastMonthClosingBalance = await getLastMonthTotalClosingBalance(restaurantId)
 
-    //Last-Year datas
+    //Last-Year
     const lastYearOpeningBalance = await getLastYearTotalOpeningBalance(
       restaurantId
     );
@@ -2136,7 +2135,7 @@ const lastYearExpense = await getLastYearTotalExpense(restaurantId);
       amount:todaysOpeningBalance.length>0?todaysOpeningBalance[0].totalAmountSum:0
     },
     {
-      title: "Sales Amount",
+      title: "Floating Amount",
       amount:todaysFloatingCash
     },
     {
@@ -2159,28 +2158,27 @@ const lastYearExpense = await getLastYearTotalExpense(restaurantId);
 
     const YesterdaysData = [{
       title: "Opening Amount",
-      // amount:YesterdaysTotalOpening.length>0?YesterdaysTotalOpening[0].yesterdayTotalOpening:0
+      amount:YesterdaysTotalOpening.length>0?YesterdaysTotalOpening[0].yesterdayTotalOpening:0
     },
     {
-      title: "Sales Amount",
-      // amount:yesterDaysFloatingCash
+      title: "Floating Amount",
+      amount:yesterDaysFloatingCash
     },
     {
       title: "Expense Amount",
-      // amount:YesterdaysTotalExpense.length>0?YesterdaysTotalExpense[0].yesterdayTotalExpenseSum:0
+      amount:YesterdaysTotalExpense.length>0?YesterdaysTotalExpense[0].yesterdayTotalExpenseSum:0
     }, {
       title: "Closing  Amount",
-      // amount:YesterdaysTotalClosing.length>0?YesterdaysTotalClosing[0].totalAmount:0
+      amount:YesterdaysTotalClosing.length>0?YesterdaysTotalClosing[0].totalAmount:0
     },
     {
       title: "Total Sales",
-      // amount: (
-      //   ((YesterdaysTotalOpening.length > 0 ? YesterdaysTotalOpening[0].yesterdayTotalOpening : 0) || 0) +
-      //   (yesterDaysFloatingCash || 0) -
-      //   ((YesterdaysTotalExpense.length > 0 ? YesterdaysTotalExpense[0].yesterdayTotalExpenseSum : 0) || 0)
-      // )
-      }
-    ]
+      amount: (
+        ((YesterdaysTotalOpening.length > 0 ? YesterdaysTotalOpening[0].yesterdayTotalOpening : 0) || 0) +
+        (yesterDaysFloatingCash || 0) -
+        ((YesterdaysTotalExpense.length > 0 ? YesterdaysTotalExpense[0].yesterdayTotalExpenseSum : 0) || 0)
+      )
+      }]
     
     
  
@@ -2226,7 +2224,7 @@ const lastYearExpense = await getLastYearTotalExpense(restaurantId);
             : 0,
       },
       {
-        title: "Sales Amount",
+        title: "Floating Amount",
         amount: lastWeekFloatingCash,
       },
       {
@@ -2265,7 +2263,7 @@ const lastYearExpense = await getLastYearTotalExpense(restaurantId);
             : 0,
       },
       {
-        title: "Sales Amount",
+        title: "Floating Amount",
         amount: lastMonthFloatingCash,
       },
       {
@@ -2301,7 +2299,7 @@ const lastYearExpense = await getLastYearTotalExpense(restaurantId);
             : 0,
       },
       {
-        title: "Sales Amount",
+        title: "Floating Amount",
         amount: lastYearFloatingcash,
       },
       {
@@ -2435,17 +2433,14 @@ exports.getTodaysOpeningData = async (req, res) => {
       ]);
 
       const OpeningAmount = Openingdata && Openingdata.totalAmount ? Openingdata.totalAmount : 0;
-      // const ClosingAmount = Closingdata && Closingdata.totalAmount ? Closingdata.totalAmount : 0;
+      const ClosingAmount = Closingdata && Closingdata.totalAmount ? Closingdata.totalAmount : 0;
       const FloatingAmount = Floatingdata && Floatingdata[0] && Floatingdata[0].totalAmount ? Floatingdata[0].totalAmount : 0;
       const ExpenseAmount = Expensedata && Expensedata[0]&& Expensedata[0].totalExpense ? Expensedata[0].totalExpense : 0;
       console.log(ExpenseAmount,"i am expense");
       // Check for NaN before performing addition
       const TotalSales = !isNaN(OpeningAmount) && !isNaN(FloatingAmount) && !isNaN(ExpenseAmount)
-        ? +OpeningAmount + +FloatingAmount
+        ? +OpeningAmount + +FloatingAmount - +ExpenseAmount
         : 0;
-        const ClosingAmount = !isNaN(OpeningAmount) && !isNaN(FloatingAmount) && !isNaN(ExpenseAmount)
-    ? (+OpeningAmount + +FloatingAmount - +ExpenseAmount)
-    : 0;
       
 
     return res.status(200).json({ success: true, OpeningAmount, ClosingAmount, FloatingAmount, ExpenseAmount,TotalSales });
@@ -2818,137 +2813,6 @@ const getTodaysTotalOrderdsInUPI = async (restaurant, posid) => {
   }
 };
 
-// CASH 
-
-const getTodaysTotalOrdersInCASH = async (restaurant, posid) => {
-  try {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    const endOfDay = new Date(today);
-    endOfDay.setDate(today.getDate() + 1);
-
-    const query = {
-      restaurantId: restaurant,
-      posManagerId: posid,
-      date: { $gte: today, $lt: endOfDay },
-      billId: { $exists: true, $ne: null },
-      paymentMethod: "Cash",
-    };
-
-    // Use the aggregate framework to calculate the sum of Amount
-    const result = await Order.aggregate([
-      { $match: query },
-      {
-        $group: {
-          _id: null,
-          totalAmountCASH: { $sum: "$Amount" },
-        },
-      },
-    ]);
-
-    // If there are no orders for today, return 0
-    if (result.length === 0) {
-      return 0;
-    }
-
-    // Extract and return only the totalAmount value
-    return result[0].totalAmountCASH;
-
-  } catch (err) {
-    console.log(err);
-    throw err; // Ensure error is propagated
-  }
-};
-
-// Card 
-
-
-const getTodaysTotalOrdersInCARD = async (restaurant, posid) => {
-  try {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    const endOfDay = new Date(today);
-    endOfDay.setDate(today.getDate() + 1);
-
-    const query = {
-      restaurantId: restaurant,
-      posManagerId: posid,
-      date: { $gte: today, $lt: endOfDay },
-      billId: { $exists: true, $ne: null },
-      paymentMethod: "Card",
-    };
-
-    // Use the aggregate framework to calculate the sum of Amount
-    const result = await Order.aggregate([
-      { $match: query },
-      {
-        $group: {
-          _id: null,
-          totalAmountCARD: { $sum: "$Amount" },
-        },
-      },
-    ]);
-
-    // If there are no orders for today, return 0
-    if (result.length === 0) {
-      return 0;
-    }
-
-    // Extract and return only the totalAmount value
-    return result[0].totalAmountCARD;
-
-  } catch (err) {
-    console.log(err);
-    throw err; // Ensure error is propagated
-  }
-};
-
-
-// credit
-
-const getTodaysTotalOrdersInCREDIT = async (restaurant, posid) => {
-  try {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    const endOfDay = new Date(today);
-    endOfDay.setDate(today.getDate() + 1);
-
-    const query = {
-      restaurantId: restaurant,
-      posManagerId: posid,
-      date: { $gte: today, $lt: endOfDay },
-      billId: { $exists: true, $ne: null },
-      paymentMethod: "Credit",
-    };
-
-    // Use the aggregate framework to calculate the sum of Amount
-    const result = await Order.aggregate([
-      { $match: query },
-      {
-        $group: {
-          _id: null,
-          totalAmountCREDIT: { $sum: "$Amount" },
-        },
-      },
-    ]);
-
-    // If there are no orders for today, return 0
-    if (result.length === 0) {
-      return 0;
-    }
-
-    // Extract and return only the totalAmount value
-    return result[0].totalAmountCREDIT;
-
-  } catch (err) {
-    console.log(err);
-    throw err; // Ensure error is propagated
-  }
-};
-
 exports.GetClosingFieldData = async (req, res) => {
   try {
     const restaurant = req.restaurant;
@@ -2980,21 +2844,6 @@ exports.GetClosingFieldData = async (req, res) => {
       posid
     );
 
-    const todaysTotalOrderdsInCASH = await getTodaysTotalOrdersInCASH(
-      restaurant,
-      posid
-    );
-
-    const todaysTotalOrderdsInCARD = await getTodaysTotalOrdersInCARD(
-      restaurant,
-      posid
-    );
-
-    const todaysTotalOrderdsInCREDIT = await getTodaysTotalOrdersInCREDIT(
-      restaurant,
-      posid
-    );
-
     console.log(todaysTotalOrders, "todaysTotalOrders");
     console.log(todaysTotalAmount, "todaysTotalAmount");
     console.log(todaysTotalAmountSwiggyOrders, "todaysTotalAmountSwiggyOrders");
@@ -3003,9 +2852,6 @@ exports.GetClosingFieldData = async (req, res) => {
     console.log(todaysTotalAmountBromagOrders, "getTodaysTotalAmountBromagOrders");
     console.log(todaysTotalAmountTakeAway, "todaysTotalAmountTakeAway");
     console.log(todaysTotalAmountDineIn, "todaysTotalAmountDineIn");
-    console.log(todaysTotalOrderdsInCASH, "todaysTotalAmountcash");
-    console.log(todaysTotalOrderdsInCARD, "todaysTotalAmountcard");
-    console.log(todaysTotalOrderdsInCREDIT, "todaysTotalAmountcredit");
 
     // console.log(todaysTotalOrderdsInUPI, "todaysTotalOrderdsInUPI");
 
@@ -3021,9 +2867,6 @@ exports.GetClosingFieldData = async (req, res) => {
       todaysTotalAmountDineIn,
       todaysTotalOrders,
       todaysTotalOrderdsInUPI,
-      todaysTotalOrderdsInCASH,
-      todaysTotalOrderdsInCARD,
-      todaysTotalOrderdsInCREDIT
     });
 
   } catch (err) {

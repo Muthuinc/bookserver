@@ -11,7 +11,7 @@ dotenv.config();
 const app = express();
 
 mongoose
-  .connect(process.env.MONGODB)
+  .connect(process.env.MONGODB, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
     console.log("Database connected");
   })
